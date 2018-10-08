@@ -2,7 +2,7 @@
     "name": "Spotify Listening History Client",
     "repository": "https://github.com/stavshamir/slh-client",
     "env": {
-        "ELM_COMPILE": "elm make src/*.elm --output elm.js"
+        "ELM_COMPILE": "elm make src/App.elm --output elm.js"
     },
     "buildpacks": [
         {
