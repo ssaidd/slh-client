@@ -7422,7 +7422,7 @@ var author$project$View$viewHistory = F2(
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text('Listening History')
+							elm$html$Html$text('Listening History!')
 						])),
 					author$project$View$viewPageInformation(history),
 					A2(
