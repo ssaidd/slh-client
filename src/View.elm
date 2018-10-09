@@ -10,7 +10,6 @@ import Regex
 import RemoteData
 import Time
 import Types exposing (..)
-import AppCss
 
 root : Model -> Html Msg
 root model =
@@ -37,31 +36,34 @@ viewHistoryOrError model =
 
 viewHistory : Time.Zone -> HistoryPage -> Html Msg
 viewHistory timeZone history =
-    div [ style "padding" "30px" ]
-        [ h2 [] [ text "Listening History" ]
-        , viewPageInformation history
-        , table []
-            ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
-        , viewPaginationButtons history
+    div [ class "container" ]
+        [ div [ class "row align-items-center justify-content-center" ]
+            [ div [ class "col-md-12" ]
+              [ h2 [] [ text "Listening History" ]
+              , viewPageInformation history
+              , table [ class "table table-striped table-dark" ]
+                  ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
+              , viewPaginationButtons history
+              ]
+            ]
         ]
-
 
 viewPaginationButtons : { a | currentPage : Int, totalPages : Int, first: Bool, last: Bool} -> Html Msg
 viewPaginationButtons { currentPage, totalPages, first, last } =
     let
         buttonWithStyle attributes html =
-          button (List.append AppCss.buttonStyle attributes) html
+          button (List.append [type_ "button", class "btn btn-outline-dark mx-auto rounded", style "width" "80px"] attributes) html
     in
-    div AppCss.centerDiv
-    [ buttonWithStyle
-        [ disabled first, onClick <| GetHistory 0 ] [ text "<<" ]
-    , buttonWithStyle
-        [ disabled first, onClick <| GetHistory (currentPage - 1) ] [ text "<" ]
-    , buttonWithStyle
-        [ disabled last, onClick <| GetHistory (currentPage + 1) ] [ text ">" ]
-    , buttonWithStyle
-        [ disabled last, onClick <| GetHistory (totalPages - 1) ] [ text ">>" ]
-    ]
+    div [ class "col-md-12 btn-group row" ]
+        [ buttonWithStyle
+            [ disabled first, onClick <| GetHistory 0 ] [ text "<<" ]
+        , buttonWithStyle
+            [ disabled first, onClick <| GetHistory (currentPage - 1) ] [ text "<" ]
+        , buttonWithStyle
+            [ disabled last, onClick <| GetHistory (currentPage + 1) ] [ text ">" ]
+        , buttonWithStyle
+            [ disabled last, onClick <| GetHistory (totalPages - 1) ] [ text ">>" ]
+        ]
 
 
 viewPageInformation : { a | currentPage : Int, totalPages : Int} -> Html Msg
@@ -75,25 +77,27 @@ viewPageInformation { currentPage, totalPages } =
 
 viewTableHeader : Html Msg
 viewTableHeader =
-    tr []
-        [ th [] []
-        , th [] [ text "Title" ]
-        , th [] [ text "Artists" ]
-        , th [] [ text "Album" ]
-        , th [] [ text "Played At" ]
+  thead []
+    [ tr []
+        [ th [ scope "col" ] []
+        , th [ scope "col" ] [ text "Title" ]
+        , th [ scope "col" ] [ text "Artists" ]
+        , th [ scope "col" ] [ text "Album" ]
+        , th [ scope "col" ] [ text "Played At" ]
         ]
-
+    ]
 
 viewTrackWithPlayedAt : Time.Zone -> TrackWithPlayedAt -> Html Msg
 viewTrackWithPlayedAt timeZone { track, playedAt } =
+  tbody [] [
     tr []
-        [ td [] [ img [ src track.albumImgUrl, height 60, width 60 ] [] ]
-        , td [] [ text track.title ]
-        , td [] [ text <| String.join ", " track.artists ]
-        , td [] [ text track.album ]
-        , td [] [ text <| adjustTime timeZone playedAt ]
+        [ td [ scope "row" ] [ img [ src track.albumImgUrl, height 60, width 60 ] [] ]
+        , td [ scope "row" ] [ text track.title ]
+        , td [ scope "row" ] [ text <| String.join ", " track.artists ]
+        , td [ scope "row" ] [ text track.album ]
+        , td [ scope "row" ] [ text <| adjustTime timeZone playedAt ]
         ]
-
+        ]
 
 adjustTime : Time.Zone -> String -> String
 adjustTime timeZone timeString =
