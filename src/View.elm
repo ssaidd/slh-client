@@ -10,7 +10,7 @@ import Regex
 import RemoteData
 import Time
 import Types exposing (..)
-
+import AppCss
 
 root : Model -> Html Msg
 root model =
@@ -37,25 +37,40 @@ viewHistoryOrError model =
 
 viewHistory : Time.Zone -> HistoryPage -> Html Msg
 viewHistory timeZone history =
-    div []
+    div [ style "padding" "30px" ]
         [ h2 [] [ text "Listening History" ]
         , viewPageInformation history
         , table []
             ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
-        , button [ onClick <| GetHistory 0 ] [ text "First" ]
-        , button [ onClick <| GetHistory (history.currentPage - 1) ] [ text "Previous" ]
-        , button [ onClick <| GetHistory (history.currentPage + 1) ] [ text "Next" ]
-        , button [ onClick <| GetHistory (history.totalPages - 1) ] [ text "Last" ]
+        , viewPaginationButtons history
         ]
 
 
-viewPageInformation : HistoryPage -> Html Msg
-viewPageInformation historyPage =
+viewPaginationButtons : { a | currentPage : Int, totalPages : Int, first: Bool, last: Bool} -> Html Msg
+viewPaginationButtons { currentPage, totalPages, first, last } =
+    let
+        buttonWithStyle attributes html =
+          button (List.append AppCss.buttonStyle attributes) html
+    in
+    div AppCss.centerDiv
+    [ buttonWithStyle
+        [ disabled first, onClick <| GetHistory 0 ] [ text "<<" ]
+    , buttonWithStyle
+        [ disabled first, onClick <| GetHistory (currentPage - 1) ] [ text "<" ]
+    , buttonWithStyle
+        [ disabled last, onClick <| GetHistory (currentPage + 1) ] [ text ">" ]
+    , buttonWithStyle
+        [ disabled last, onClick <| GetHistory (totalPages - 1) ] [ text ">>" ]
+    ]
+
+
+viewPageInformation : { a | currentPage : Int, totalPages : Int} -> Html Msg
+viewPageInformation { currentPage, totalPages } =
     text <|
         "Showing page "
-            ++ String.fromInt historyPage.currentPage
+            ++ String.fromInt (currentPage + 1)
             ++ " out of "
-            ++ String.fromInt historyPage.totalPages
+            ++ String.fromInt totalPages
 
 
 viewTableHeader : Html Msg
