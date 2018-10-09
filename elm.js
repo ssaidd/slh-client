@@ -6299,36 +6299,6 @@ var author$project$View$viewPageInformation = function (_n0) {
 	return elm$html$Html$text(
 		'Showing page ' + (elm$core$String$fromInt(currentPage + 1) + (' out of ' + elm$core$String$fromInt(totalPages))));
 };
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var author$project$AppCss$buttonStyle = A2(
-	elm$core$List$map,
-	function (_n0) {
-		var a = _n0.a;
-		var b = _n0.b;
-		return A2(elm$html$Html$Attributes$style, a, b);
-	},
-	_List_fromArray(
-		[
-			_Utils_Tuple2('padding', '14px 20px'),
-			_Utils_Tuple2('margin-top', '10px'),
-			_Utils_Tuple2('margin-right', '10px'),
-			_Utils_Tuple2('border-radius', '4px'),
-			_Utils_Tuple2('border', 'none'),
-			_Utils_Tuple2('font-size', '16px')
-		]));
-var author$project$AppCss$centerDiv = A2(
-	elm$core$List$map,
-	function (_n0) {
-		var a = _n0.a;
-		var b = _n0.b;
-		return A2(elm$html$Html$Attributes$style, a, b);
-	},
-	_List_fromArray(
-		[
-			_Utils_Tuple2('margin', '0 auto'),
-			_Utils_Tuple2('padding', '20px')
-		]));
 var author$project$Types$GetHistory = function (a) {
 	return {$: 0, a: a};
 };
@@ -6342,6 +6312,15 @@ var elm$core$List$append = F2(
 	});
 var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
@@ -6351,6 +6330,9 @@ var elm$html$Html$Attributes$boolProperty = F2(
 			elm$json$Json$Encode$bool(bool));
 	});
 var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
 };
@@ -6377,12 +6359,23 @@ var author$project$View$viewPaginationButtons = function (_n0) {
 		function (attributes, html) {
 			return A2(
 				elm$html$Html$button,
-				A2(elm$core$List$append, author$project$AppCss$buttonStyle, attributes),
+				A2(
+					elm$core$List$append,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$type_('button'),
+							elm$html$Html$Attributes$class('btn btn-outline-dark mx-auto rounded'),
+							A2(elm$html$Html$Attributes$style, 'width', '80px')
+						]),
+					attributes),
 				html);
 		});
 	return A2(
 		elm$html$Html$div,
-		author$project$AppCss$centerDiv,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('col-md-12 btn-group row')
+			]),
 		_List_fromArray(
 			[
 				A2(
@@ -6436,40 +6429,66 @@ var author$project$View$viewPaginationButtons = function (_n0) {
 			]));
 };
 var elm$html$Html$th = _VirtualDom_node('th');
+var elm$html$Html$thead = _VirtualDom_node('thead');
 var elm$html$Html$tr = _VirtualDom_node('tr');
+var elm$html$Html$Attributes$scope = elm$html$Html$Attributes$stringProperty('scope');
 var author$project$View$viewTableHeader = A2(
-	elm$html$Html$tr,
+	elm$html$Html$thead,
 	_List_Nil,
 	_List_fromArray(
 		[
-			A2(elm$html$Html$th, _List_Nil, _List_Nil),
 			A2(
-			elm$html$Html$th,
+			elm$html$Html$tr,
 			_List_Nil,
 			_List_fromArray(
 				[
-					elm$html$Html$text('Title')
-				])),
-			A2(
-			elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('Artists')
-				])),
-			A2(
-			elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('Album')
-				])),
-			A2(
-			elm$html$Html$th,
-			_List_Nil,
-			_List_fromArray(
-				[
-					elm$html$Html$text('Played At')
+					A2(
+					elm$html$Html$th,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$scope('col')
+						]),
+					_List_Nil),
+					A2(
+					elm$html$Html$th,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$scope('col')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Title')
+						])),
+					A2(
+					elm$html$Html$th,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$scope('col')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Artists')
+						])),
+					A2(
+					elm$html$Html$th,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$scope('col')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Album')
+						])),
+					A2(
+					elm$html$Html$th,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$scope('col')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Played At')
+						]))
 				]))
 		]));
 var elm$core$String$cons = _String_cons;
@@ -7322,6 +7341,7 @@ var author$project$View$adjustTime = F2(
 					timeString)));
 	});
 var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$tbody = _VirtualDom_node('tbody');
 var elm$html$Html$td = _VirtualDom_node('td');
 var elm$html$Html$Attributes$height = function (n) {
 	return A2(
@@ -7329,14 +7349,6 @@ var elm$html$Html$Attributes$height = function (n) {
 		'height',
 		elm$core$String$fromInt(n));
 };
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
 var elm$html$Html$Attributes$src = function (url) {
 	return A2(
 		elm$html$Html$Attributes$stringProperty,
@@ -7354,54 +7366,75 @@ var author$project$View$viewTrackWithPlayedAt = F2(
 		var track = _n0.bk;
 		var playedAt = _n0.ba;
 		return A2(
-			elm$html$Html$tr,
+			elm$html$Html$tbody,
 			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$td,
+					elm$html$Html$tr,
 					_List_Nil,
 					_List_fromArray(
 						[
 							A2(
-							elm$html$Html$img,
+							elm$html$Html$td,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$src(track.aH),
-									elm$html$Html$Attributes$height(60),
-									elm$html$Html$Attributes$width(60)
+									elm$html$Html$Attributes$scope('row')
 								]),
-							_List_Nil)
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(track.bh)
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							A2(elm$core$String$join, ', ', track.aJ))
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(track.aG)
-						])),
-					A2(
-					elm$html$Html$td,
-					_List_Nil,
-					_List_fromArray(
-						[
-							elm$html$Html$text(
-							A2(author$project$View$adjustTime, timeZone, playedAt))
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$img,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$src(track.aH),
+											elm$html$Html$Attributes$height(60),
+											elm$html$Html$Attributes$width(60)
+										]),
+									_List_Nil)
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$scope('row')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(track.bh)
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$scope('row')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									A2(elm$core$String$join, ', ', track.aJ))
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$scope('row')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(track.aG)
+								])),
+							A2(
+							elm$html$Html$td,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$scope('row')
+								]),
+							_List_fromArray(
+								[
+									elm$html$Html$text(
+									A2(author$project$View$adjustTime, timeZone, playedAt))
+								]))
 						]))
 				]));
 	});
@@ -7413,29 +7446,50 @@ var author$project$View$viewHistory = F2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					A2(elm$html$Html$Attributes$style, 'padding', '30px')
+					elm$html$Html$Attributes$class('container')
 				]),
 			_List_fromArray(
 				[
 					A2(
-					elm$html$Html$h2,
-					_List_Nil,
+					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$text('Listening History!')
-						])),
-					author$project$View$viewPageInformation(history),
-					A2(
-					elm$html$Html$table,
-					_List_Nil,
-					_Utils_ap(
-						_List_fromArray(
-							[author$project$View$viewTableHeader]),
-						A2(
-							elm$core$List$map,
-							author$project$View$viewTrackWithPlayedAt(timeZone),
-							history.bl))),
-					author$project$View$viewPaginationButtons(history)
+							elm$html$Html$Attributes$class('row align-items-center justify-content-center')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('col-md-12')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									elm$html$Html$h2,
+									_List_Nil,
+									_List_fromArray(
+										[
+											elm$html$Html$text('Listening History')
+										])),
+									author$project$View$viewPageInformation(history),
+									A2(
+									elm$html$Html$table,
+									_List_fromArray(
+										[
+											elm$html$Html$Attributes$class('table table-striped table-dark')
+										]),
+									_Utils_ap(
+										_List_fromArray(
+											[author$project$View$viewTableHeader]),
+										A2(
+											elm$core$List$map,
+											author$project$View$viewTrackWithPlayedAt(timeZone),
+											history.bl))),
+									author$project$View$viewPaginationButtons(history)
+								]))
+						]))
 				]));
 	});
 var elm$html$Html$h3 = _VirtualDom_node('h3');
