@@ -13,7 +13,7 @@ make production
 echo
 
 echo "- Comitting new artefacts..."
-git add index.html
+git add elm.js
 git commit -m "Updating build artefacts"
 echo
 
