@@ -997,16 +997,16 @@ var _Http_toTask = F2(function(request, maybeProgress)
 			callback(_Scheduler_fail(elm$http$Http$Timeout));
 		});
 		xhr.addEventListener('load', function() {
-			callback(_Http_handleResponse(xhr, request.aR.a));
+			callback(_Http_handleResponse(xhr, request.aS.a));
 		});
 
 		try
 		{
-			xhr.open(request.a1, request.bh, true);
+			xhr.open(request.a4, request.bn, true);
 		}
 		catch (e)
 		{
-			return callback(_Scheduler_fail(elm$http$Http$BadUrl(request.bh)));
+			return callback(_Scheduler_fail(elm$http$Http$BadUrl(request.bn)));
 		}
 
 		_Http_configureRequest(xhr, request);
@@ -1042,15 +1042,15 @@ function _Http_configureProgress(xhr, maybeProgress)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.aV; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.aX; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 
-	xhr.responseType = request.aR.b;
-	xhr.withCredentials = request.bj;
+	xhr.responseType = request.aS.b;
+	xhr.withCredentials = request.bp;
 
-	elm$core$Maybe$isJust(request.bd) && (xhr.timeout = request.bd.a);
+	elm$core$Maybe$isJust(request.bg) && (xhr.timeout = request.bg.a);
 }
 
 
@@ -1082,9 +1082,9 @@ function _Http_handleResponse(xhr, responseToResult)
 function _Http_toResponse(xhr)
 {
 	return {
-		bh: xhr.responseURL,
-		ba: { aO: xhr.status, a0: xhr.statusText },
-		aV: _Http_parseHeaders(xhr.getAllResponseHeaders()),
+		bn: xhr.responseURL,
+		bd: { aO: xhr.status, a3: xhr.statusText },
+		aX: _Http_parseHeaders(xhr.getAllResponseHeaders()),
 		aK: xhr.response
 	};
 }
@@ -2050,9 +2050,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aZ,
-		impl.bg,
-		impl.bc,
+		impl.a$,
+		impl.bm,
+		impl.bf,
 		function() { return function() {} }
 	);
 });
@@ -2898,7 +2898,7 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		a0: func(record.a0),
+		a3: func(record.a3),
 		R: record.R,
 		P: record.P
 	}
@@ -3168,7 +3168,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.a0;
+		var message = !tag ? value : tag < 3 ? value.a : value.a3;
 		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.R;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
@@ -4390,11 +4390,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aZ,
-		impl.bg,
-		impl.bc,
+		impl.a$,
+		impl.bm,
+		impl.bf,
 		function(sendToApp, initialModel) {
-			var view = impl.bi;
+			var view = impl.bo;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -4426,12 +4426,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.aZ,
-		impl.bg,
-		impl.bc,
+		impl.a$,
+		impl.bm,
+		impl.bf,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.D && impl.D(sendToApp)
-			var view = impl.bi;
+			var view = impl.bo;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -4444,7 +4444,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.be) && (_VirtualDom_doc.title = title = doc.be);
+				(title !== doc.bh) && (_VirtualDom_doc.title = title = doc.bh);
 			});
 		}
 	);
@@ -4495,8 +4495,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.a4;
-	var onUrlRequest = impl.a5;
+	var onUrlChange = impl.a7;
+	var onUrlRequest = impl.a8;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4526,13 +4526,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		aZ: function(flags)
+		a$: function(flags)
 		{
-			return A3(impl.aZ, flags, _Browser_getUrl(), key);
+			return A3(impl.a$, flags, _Browser_getUrl(), key);
 		},
-		bi: impl.bi,
-		bg: impl.bg,
-		bc: impl.bc
+		bo: impl.bo,
+		bm: impl.bm,
+		bf: impl.bf
 	});
 }
 
@@ -4598,17 +4598,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aW: 'hidden', B: 'visibilitychange' }
+		? { aY: 'hidden', B: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aW: 'mozHidden', B: 'mozvisibilitychange' }
+		? { aY: 'mozHidden', B: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aW: 'msHidden', B: 'msvisibilitychange' }
+		? { aY: 'msHidden', B: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aW: 'webkitHidden', B: 'webkitvisibilitychange' }
-		: { aW: 'hidden', B: 'visibilitychange' };
+		? { aY: 'webkitHidden', B: 'webkitvisibilitychange' }
+		: { aY: 'hidden', B: 'visibilitychange' };
 }
 
 
@@ -4773,7 +4773,7 @@ function _Browser_getElement(id)
 				z: _Browser_doc.documentElement.clientWidth,
 				u: _Browser_doc.documentElement.clientHeight
 			},
-			aQ: {
+			aR: {
 				K: x + rect.left,
 				L: y + rect.top,
 				z: rect.width,
@@ -5870,12 +5870,12 @@ var author$project$Rest$getWithCors = F2(
 		return elm$http$Http$request(
 			{
 				aK: elm$http$Http$emptyBody,
-				aR: elm$http$Http$expectJson(decoder),
-				aV: _List_Nil,
-				a1: 'get',
-				bd: elm$core$Maybe$Nothing,
-				bh: url,
-				bj: true
+				aS: elm$http$Http$expectJson(decoder),
+				aX: _List_Nil,
+				a4: 'get',
+				bg: elm$core$Maybe$Nothing,
+				bn: url,
+				bp: true
 			});
 	});
 var elm$json$Json$Decode$map2 = _Json_map2;
@@ -5890,7 +5890,7 @@ var NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required = F3(
 	});
 var author$project$Types$Track = F4(
 	function (title, artists, album, albumImgUrl) {
-		return {aG: album, aH: albumImgUrl, aJ: artists, be: title};
+		return {aG: album, aH: albumImgUrl, aJ: artists, bh: title};
 	});
 var elm$json$Json$Decode$list = _Json_decodeList;
 var elm$json$Json$Decode$string = _Json_decodeString;
@@ -5914,7 +5914,7 @@ var author$project$Rest$trackDecoder = A3(
 				elm$json$Json$Decode$succeed(author$project$Types$Track)))));
 var author$project$Types$TrackWithPlayedAt = F2(
 	function (track, playedAt) {
-		return {a7: playedAt, bf: track};
+		return {ba: playedAt, bk: track};
 	});
 var author$project$Rest$trackWithPlayedAtDecoder = A3(
 	NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
@@ -5925,10 +5925,38 @@ var author$project$Rest$trackWithPlayedAtDecoder = A3(
 		'trackData',
 		author$project$Rest$trackDecoder,
 		elm$json$Json$Decode$succeed(author$project$Types$TrackWithPlayedAt)));
-var author$project$Rest$historyDecoder = A2(
-	elm$json$Json$Decode$field,
-	'content',
-	elm$json$Json$Decode$list(author$project$Rest$trackWithPlayedAtDecoder));
+var author$project$Rest$historyDecoder = elm$json$Json$Decode$list(author$project$Rest$trackWithPlayedAtDecoder);
+var author$project$Types$HistoryPage = F6(
+	function (tracks, totalElements, totalPages, currentPage, first, last) {
+		return {aQ: currentPage, aU: first, a1: last, bi: totalElements, bj: totalPages, bl: tracks};
+	});
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var author$project$Rest$historyPageDecoder = A3(
+	NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+	'last',
+	elm$json$Json$Decode$bool,
+	A3(
+		NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+		'first',
+		elm$json$Json$Decode$bool,
+		A3(
+			NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+			'number',
+			elm$json$Json$Decode$int,
+			A3(
+				NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+				'totalPages',
+				elm$json$Json$Decode$int,
+				A3(
+					NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+					'totalElements',
+					elm$json$Json$Decode$int,
+					A3(
+						NoRedInk$elm_json_decode_pipeline$Json$Decode$Pipeline$required,
+						'content',
+						author$project$Rest$historyDecoder,
+						elm$json$Json$Decode$succeed(author$project$Types$HistoryPage)))))));
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
 		if (!ls.b) {
@@ -6029,7 +6057,7 @@ var elm$url$Url$Builder$int = F2(
 			elm$url$Url$percentEncode(key),
 			elm$core$String$fromInt(value));
 	});
-var author$project$Rest$toHistoryUrl = function () {
+var author$project$Rest$toHistoryUrl = function (nextPage) {
 	var baseUrl = 'https://spotify-listening-history.herokuapp.com';
 	return A3(
 		elm$url$Url$Builder$crossOrigin,
@@ -6038,9 +6066,10 @@ var author$project$Rest$toHistoryUrl = function () {
 			['listening-history', 'get']),
 		_List_fromArray(
 			[
-				A2(elm$url$Url$Builder$int, 'size', 10)
+				A2(elm$url$Url$Builder$int, 'size', 10),
+				A2(elm$url$Url$Builder$int, 'page', nextPage)
 			]));
-}();
+};
 var author$project$Types$ReceivedHistory = function (a) {
 	return {$: 1, a: a};
 };
@@ -6165,11 +6194,16 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 	}
 };
 var krisajenkins$remotedata$RemoteData$sendRequest = elm$http$Http$send(krisajenkins$remotedata$RemoteData$fromResult);
-var author$project$Rest$getHistoryCommand = A2(
-	elm$core$Platform$Cmd$map,
-	author$project$Types$ReceivedHistory,
-	krisajenkins$remotedata$RemoteData$sendRequest(
-		A2(author$project$Rest$getWithCors, author$project$Rest$toHistoryUrl, author$project$Rest$historyDecoder)));
+var author$project$Rest$getHistoryCommand = function (nextPage) {
+	return A2(
+		elm$core$Platform$Cmd$map,
+		author$project$Types$ReceivedHistory,
+		krisajenkins$remotedata$RemoteData$sendRequest(
+			A2(
+				author$project$Rest$getWithCors,
+				author$project$Rest$toHistoryUrl(nextPage),
+				author$project$Rest$historyPageDecoder)));
+};
 var author$project$Types$ReceivedTimeZone = function (a) {
 	return {$: 2, a: a};
 };
@@ -6199,7 +6233,10 @@ var author$project$State$init = function (_n0) {
 		{M: krisajenkins$remotedata$RemoteData$Loading, aC: elm$time$Time$utc},
 		elm$core$Platform$Cmd$batch(
 			_List_fromArray(
-				[author$project$Rest$getHistoryCommand, author$project$State$getTimeZone])));
+				[
+					author$project$Rest$getHistoryCommand(0),
+					author$project$State$getTimeZone
+				])));
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
@@ -6211,11 +6248,12 @@ var author$project$State$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 0:
+				var nextPage = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
 						{M: krisajenkins$remotedata$RemoteData$Loading}),
-					author$project$Rest$getHistoryCommand);
+					author$project$Rest$getHistoryCommand(nextPage));
 			case 1:
 				var response = msg.a;
 				return _Utils_Tuple2(
@@ -6243,12 +6281,15 @@ var author$project$View$createErrorMessage = function (httpError) {
 			return 'Failed to retrieve history from server.';
 		case 3:
 			var response = httpError.a;
-			return response.ba.a0;
+			return 'foo1 ' + (response.aK + response.bd.a3);
 		default:
 			var message = httpError.a;
 			var response = httpError.b;
 			return message;
 	}
+};
+var author$project$Types$GetHistory = function (a) {
+	return {$: 0, a: a};
 };
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6265,6 +6306,10 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var author$project$View$viewPageInformation = function (historyPage) {
+	return elm$html$Html$text(
+		'Showing page ' + (elm$core$String$fromInt(historyPage.aQ) + (' out of ' + elm$core$String$fromInt(historyPage.bj))));
+};
 var elm$html$Html$th = _VirtualDom_node('th');
 var elm$html$Html$tr = _VirtualDom_node('tr');
 var author$project$View$viewTableHeader = A2(
@@ -6521,7 +6566,7 @@ var elm$core$Maybe$withDefault = F2(
 	});
 var elm$regex$Regex$Match = F4(
 	function (match, index, number, submatches) {
-		return {aY: index, a$: match, a3: number, bb: submatches};
+		return {a_: index, a2: match, a6: number, be: submatches};
 	});
 var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var elm$regex$Regex$fromString = function (string) {
@@ -7181,8 +7226,8 @@ var elm$html$Html$Attributes$width = function (n) {
 };
 var author$project$View$viewTrackWithPlayedAt = F2(
 	function (timeZone, _n0) {
-		var track = _n0.bf;
-		var playedAt = _n0.a7;
+		var track = _n0.bk;
+		var playedAt = _n0.ba;
 		return A2(
 			elm$html$Html$tr,
 			_List_Nil,
@@ -7208,7 +7253,7 @@ var author$project$View$viewTrackWithPlayedAt = F2(
 					_List_Nil,
 					_List_fromArray(
 						[
-							elm$html$Html$text(track.be)
+							elm$html$Html$text(track.bh)
 						])),
 					A2(
 					elm$html$Html$td,
@@ -7235,9 +7280,27 @@ var author$project$View$viewTrackWithPlayedAt = F2(
 						]))
 				]));
 	});
+var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h2 = _VirtualDom_node('h2');
 var elm$html$Html$table = _VirtualDom_node('table');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$View$viewHistory = F2(
 	function (timeZone, history) {
 		return A2(
@@ -7252,6 +7315,7 @@ var author$project$View$viewHistory = F2(
 						[
 							elm$html$Html$text('Listening History')
 						])),
+					author$project$View$viewPageInformation(history),
 					A2(
 					elm$html$Html$table,
 					_List_Nil,
@@ -7261,7 +7325,51 @@ var author$project$View$viewHistory = F2(
 						A2(
 							elm$core$List$map,
 							author$project$View$viewTrackWithPlayedAt(timeZone),
-							history)))
+							history.bl))),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Types$GetHistory(0))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('First')
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Types$GetHistory(history.aQ - 1))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Previous')
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Types$GetHistory(history.aQ + 1))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Next')
+						])),
+					A2(
+					elm$html$Html$button,
+					_List_fromArray(
+						[
+							elm$html$Html$Events$onClick(
+							author$project$Types$GetHistory(history.bj - 1))
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('Last')
+						]))
 				]));
 	});
 var elm$html$Html$h3 = _VirtualDom_node('h3');
@@ -7437,7 +7545,7 @@ var elm$url$Url$fromString = function (str) {
 };
 var elm$browser$Browser$element = _Browser_element;
 var author$project$App$main = elm$browser$Browser$element(
-	{aZ: author$project$State$init, bc: author$project$State$subscriptions, bg: author$project$State$update, bi: author$project$View$root});
+	{a$: author$project$State$init, bf: author$project$State$subscriptions, bm: author$project$State$update, bo: author$project$View$root});
 _Platform_export({'App':{'init':author$project$App$main(
 	elm$json$Json$Decode$succeed(0))(0)}});}(this));
 
