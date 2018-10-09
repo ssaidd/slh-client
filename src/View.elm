@@ -2,6 +2,7 @@ module View exposing (root)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Http
 import Iso8601
 import Parser
@@ -34,12 +35,27 @@ viewHistoryOrError model =
             text <| createErrorMessage httpError
 
 
-viewHistory : Time.Zone -> List TrackWithPlayedAt -> Html Msg
+viewHistory : Time.Zone -> HistoryPage -> Html Msg
 viewHistory timeZone history =
     div []
         [ h2 [] [ text "Listening History" ]
-        , table [] ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history)
+        , viewPageInformation history
+        , table []
+            ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
+        , button [ onClick <| GetHistory 0 ] [ text "First" ]
+        , button [ onClick <| GetHistory (history.currentPage - 1) ] [ text "Previous" ]
+        , button [ onClick <| GetHistory (history.currentPage + 1) ] [ text "Next" ]
+        , button [ onClick <| GetHistory (history.totalPages - 1) ] [ text "Last" ]
         ]
+
+
+viewPageInformation : HistoryPage -> Html Msg
+viewPageInformation historyPage =
+    text <|
+        "Showing page "
+            ++ String.fromInt historyPage.currentPage
+            ++ " out of "
+            ++ String.fromInt historyPage.totalPages
 
 
 viewTableHeader : Html Msg
@@ -150,7 +166,7 @@ createErrorMessage httpError =
             "Failed to retrieve history from server."
 
         Http.BadStatus response ->
-            response.status.message
+            "foo1 " ++ response.body ++ response.status.message
 
         Http.BadPayload message response ->
             message

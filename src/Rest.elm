@@ -1,28 +1,32 @@
 module Rest exposing (getHistoryCommand)
 
 import Http
-import Json.Decode exposing (Decoder, field, list, string)
+import Json.Decode exposing (Decoder, bool, field, int, list, string)
 import Json.Decode.Pipeline exposing (required)
 import RemoteData
 import Types exposing (..)
 import Url.Builder as Url
 
 
-getHistoryCommand : Cmd Msg
-getHistoryCommand =
-    historyDecoder
-        |> getWithCors toHistoryUrl
+getHistoryCommand : Int -> Cmd Msg
+getHistoryCommand nextPage =
+    historyPageDecoder
+        |> getWithCors (toHistoryUrl nextPage)
         |> RemoteData.sendRequest
         |> Cmd.map ReceivedHistory
 
 
-toHistoryUrl : String
-toHistoryUrl =
+toHistoryUrl : Int -> String
+toHistoryUrl nextPage =
     let
         baseUrl =
             "https://spotify-listening-history.herokuapp.com"
     in
-    Url.crossOrigin baseUrl [ "listening-history", "get" ] [ Url.int "size" 10 ]
+    Url.crossOrigin baseUrl
+        [ "listening-history", "get" ]
+        [ Url.int "size" 10
+        , Url.int "page" nextPage
+        ]
 
 
 getWithCors : String -> Decoder a -> Http.Request a
@@ -38,9 +42,20 @@ getWithCors url decoder =
         }
 
 
+historyPageDecoder : Decoder HistoryPage
+historyPageDecoder =
+    Json.Decode.succeed HistoryPage
+        |> required "content" historyDecoder
+        |> required "totalElements" int
+        |> required "totalPages" int
+        |> required "number" int
+        |> required "first" bool
+        |> required "last" bool
+
+
 historyDecoder : Decoder (List TrackWithPlayedAt)
 historyDecoder =
-    field "content" (list trackWithPlayedAtDecoder)
+    list trackWithPlayedAtDecoder
 
 
 trackWithPlayedAtDecoder : Decoder TrackWithPlayedAt
