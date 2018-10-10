@@ -11,7 +11,7 @@ import Types exposing (..)
 init : () -> ( Model, Cmd Msg )
 init _ =
     ( { history = RemoteData.Loading, timeZone = Time.utc }
-    , Platform.Cmd.batch [ getHistoryCommand 0, getTimeZone ]
+    , Platform.Cmd.batch [ getHistoryCommand 0 True, getTimeZone ]
     )
 
 
@@ -19,7 +19,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GetHistory nextPage ->
-            ( { model | history = RemoteData.Loading }, getHistoryCommand nextPage )
+            ( model, getHistoryCommand nextPage False )
 
         ReceivedHistory response ->
             ( { model | history = response }, Cmd.none )

@@ -13,7 +13,7 @@ import Types exposing (..)
 
 root : Model -> Html Msg
 root model =
-    div []
+    div [ class "container" ]
         [ viewHistoryOrError model
         ]
 
@@ -25,7 +25,7 @@ viewHistoryOrError model =
             text ""
 
         RemoteData.Loading ->
-            h3 [] [ text "Loading..." ]
+            h3 [] [ text "Loading" ]
 
         RemoteData.Success history ->
             viewHistory model.timeZone history
@@ -36,17 +36,23 @@ viewHistoryOrError model =
 
 viewHistory : Time.Zone -> HistoryPage -> Html Msg
 viewHistory timeZone history =
-    div [ class "container" ]
-        [ div [ class "row align-items-center justify-content-center" ]
-            [ div [ class "col-md-12" ]
-              [ h2 [] [ text "Listening History" ]
-              , viewPageInformation history
-              , table [ class "table table-striped table-dark" ]
-                  ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
-              , viewPaginationButtons history
-              ]
-            ]
+    div []
+        [ div [ class "container" ]
+            [ div [ class "row my-2" ] [ viewPaginationButtons history ] ]
+        , div [ class "container" ]
+            [ div [ class "row" ] [ viewHistoryTable timeZone history ] ]
+        , div [ class "container" ]
+            [ div [ class "row my-2" ] [ viewPaginationButtons history ] ]
         ]
+
+
+viewHistoryTable : Time.Zone -> HistoryPage -> Html Msg
+viewHistoryTable timeZone history =
+    div [ class "col" ]
+        [ table [ class "table table-striped table-dark" ]
+              ([ viewTableHeader ] ++ List.map (viewTrackWithPlayedAt timeZone) history.tracks)
+        ]
+
 
 viewPaginationButtons : { a | currentPage : Int, totalPages : Int, first: Bool, last: Bool} -> Html Msg
 viewPaginationButtons { currentPage, totalPages, first, last } =
@@ -54,11 +60,12 @@ viewPaginationButtons { currentPage, totalPages, first, last } =
         buttonWithStyle attributes html =
           button (List.append [type_ "button", class "btn btn-outline-dark mx-auto rounded", style "width" "80px"] attributes) html
     in
-    div [ class "col-md-12 btn-group row" ]
+    div [ class "col btn-group" ]
         [ buttonWithStyle
             [ disabled first, onClick <| GetHistory 0 ] [ text "<<" ]
         , buttonWithStyle
             [ disabled first, onClick <| GetHistory (currentPage - 1) ] [ text "<" ]
+        , viewPageInformation currentPage totalPages
         , buttonWithStyle
             [ disabled last, onClick <| GetHistory (currentPage + 1) ] [ text ">" ]
         , buttonWithStyle
@@ -66,12 +73,10 @@ viewPaginationButtons { currentPage, totalPages, first, last } =
         ]
 
 
-viewPageInformation : { a | currentPage : Int, totalPages : Int} -> Html Msg
-viewPageInformation { currentPage, totalPages } =
-    text <|
-        "Showing page "
-            ++ String.fromInt (currentPage + 1)
-            ++ " out of "
+viewPageInformation : Int -> Int -> Html Msg
+viewPageInformation currentPage totalPages =
+    text <| String.fromInt (currentPage + 1)
+            ++ "/"
             ++ String.fromInt totalPages
 
 
