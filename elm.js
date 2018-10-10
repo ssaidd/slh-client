@@ -586,11 +586,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.Q.C === region.Y.C)
+	if (region.P.C === region.X.C)
 	{
-		return 'on line ' + region.Q.C;
+		return 'on line ' + region.P.C;
 	}
-	return 'on lines ' + region.Q.C + ' through ' + region.Y.C;
+	return 'on lines ' + region.P.C + ' through ' + region.X.C;
 }
 
 
@@ -2889,8 +2889,8 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		a3: func(record.a3),
-		R: record.R,
-		P: record.P
+		Q: record.Q,
+		O: record.O
 	}
 });
 
@@ -3159,10 +3159,10 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.a3;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.R;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.Q;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.P) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.O) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -4145,7 +4145,7 @@ var _Regex_fromStringWith = F2(function(options, string)
 {
 	var flags = 'g';
 	if (options.aj) { flags += 'm'; }
-	if (options.U) { flags += 'i'; }
+	if (options.T) { flags += 'i'; }
 
 	try
 	{
@@ -6047,19 +6047,31 @@ var elm$url$Url$Builder$int = F2(
 			elm$url$Url$percentEncode(key),
 			elm$core$String$fromInt(value));
 	});
-var author$project$Rest$toHistoryUrl = function (nextPage) {
-	var baseUrl = 'https://spotify-listening-history.herokuapp.com';
-	return A3(
-		elm$url$Url$Builder$crossOrigin,
-		baseUrl,
-		_List_fromArray(
-			['listening-history', 'get']),
-		_List_fromArray(
-			[
-				A2(elm$url$Url$Builder$int, 'size', 10),
-				A2(elm$url$Url$Builder$int, 'page', nextPage)
-			]));
-};
+var elm$url$Url$Builder$string = F2(
+	function (key, value) {
+		return A2(
+			elm$url$Url$Builder$QueryParameter,
+			elm$url$Url$percentEncode(key),
+			elm$url$Url$percentEncode(value));
+	});
+var author$project$Rest$toHistoryUrl = F2(
+	function (nextPage, update) {
+		var baseUrl = 'https://spotify-listening-history.herokuapp.com';
+		return A3(
+			elm$url$Url$Builder$crossOrigin,
+			baseUrl,
+			_List_fromArray(
+				['listening-history', 'get']),
+			_List_fromArray(
+				[
+					A2(elm$url$Url$Builder$int, 'size', 8),
+					A2(elm$url$Url$Builder$int, 'page', nextPage),
+					A2(
+					elm$url$Url$Builder$string,
+					'update',
+					update ? 'true' : 'false')
+				]));
+	});
 var author$project$Types$ReceivedHistory = function (a) {
 	return {$: 1, a: a};
 };
@@ -6184,16 +6196,17 @@ var krisajenkins$remotedata$RemoteData$fromResult = function (result) {
 	}
 };
 var krisajenkins$remotedata$RemoteData$sendRequest = elm$http$Http$send(krisajenkins$remotedata$RemoteData$fromResult);
-var author$project$Rest$getHistoryCommand = function (nextPage) {
-	return A2(
-		elm$core$Platform$Cmd$map,
-		author$project$Types$ReceivedHistory,
-		krisajenkins$remotedata$RemoteData$sendRequest(
-			A2(
-				author$project$Rest$getWithCors,
-				author$project$Rest$toHistoryUrl(nextPage),
-				author$project$Rest$historyPageDecoder)));
-};
+var author$project$Rest$getHistoryCommand = F2(
+	function (nextPage, update) {
+		return A2(
+			elm$core$Platform$Cmd$map,
+			author$project$Types$ReceivedHistory,
+			krisajenkins$remotedata$RemoteData$sendRequest(
+				A2(
+					author$project$Rest$getWithCors,
+					A2(author$project$Rest$toHistoryUrl, nextPage, update),
+					author$project$Rest$historyPageDecoder)));
+	});
 var author$project$Types$ReceivedTimeZone = function (a) {
 	return {$: 2, a: a};
 };
@@ -6220,11 +6233,11 @@ var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
 var krisajenkins$remotedata$RemoteData$Loading = {$: 1};
 var author$project$State$init = function (_n0) {
 	return _Utils_Tuple2(
-		{M: krisajenkins$remotedata$RemoteData$Loading, aC: elm$time$Time$utc},
+		{ac: krisajenkins$remotedata$RemoteData$Loading, aC: elm$time$Time$utc},
 		elm$core$Platform$Cmd$batch(
 			_List_fromArray(
 				[
-					author$project$Rest$getHistoryCommand(0),
+					A2(author$project$Rest$getHistoryCommand, 0, true),
 					author$project$State$getTimeZone
 				])));
 };
@@ -6240,16 +6253,14 @@ var author$project$State$update = F2(
 			case 0:
 				var nextPage = msg.a;
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{M: krisajenkins$remotedata$RemoteData$Loading}),
-					author$project$Rest$getHistoryCommand(nextPage));
+					model,
+					A2(author$project$Rest$getHistoryCommand, nextPage, false));
 			case 1:
 				var response = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{M: response}),
+						{ac: response}),
 					elm$core$Platform$Cmd$none);
 			default:
 				var timeZone = msg.a;
@@ -6293,25 +6304,9 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 };
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var author$project$View$viewPageInformation = function (_n0) {
-	var currentPage = _n0.aQ;
-	var totalPages = _n0.bj;
-	return elm$html$Html$text(
-		'Showing page ' + (elm$core$String$fromInt(currentPage + 1) + (' out of ' + elm$core$String$fromInt(totalPages))));
-};
-var author$project$Types$GetHistory = function (a) {
-	return {$: 0, a: a};
-};
-var elm$core$List$append = F2(
-	function (xs, ys) {
-		if (!ys.b) {
-			return xs;
-		} else {
-			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
-		}
-	});
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$th = _VirtualDom_node('th');
+var elm$html$Html$thead = _VirtualDom_node('thead');
+var elm$html$Html$tr = _VirtualDom_node('tr');
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6320,117 +6315,6 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			elm$json$Json$Encode$string(string));
 	});
-var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
-var elm$json$Json$Encode$bool = _Json_wrap;
-var elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$bool(bool));
-	});
-var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 0, a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var author$project$View$viewPaginationButtons = function (_n0) {
-	var currentPage = _n0.aQ;
-	var totalPages = _n0.bj;
-	var first = _n0.aU;
-	var last = _n0.a1;
-	var buttonWithStyle = F2(
-		function (attributes, html) {
-			return A2(
-				elm$html$Html$button,
-				A2(
-					elm$core$List$append,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$type_('button'),
-							elm$html$Html$Attributes$class('btn btn-outline-dark mx-auto rounded'),
-							A2(elm$html$Html$Attributes$style, 'width', '80px')
-						]),
-					attributes),
-				html);
-		});
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('col-md-12 btn-group row')
-			]),
-		_List_fromArray(
-			[
-				A2(
-				buttonWithStyle,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$disabled(first),
-						elm$html$Html$Events$onClick(
-						author$project$Types$GetHistory(0))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('<<')
-					])),
-				A2(
-				buttonWithStyle,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$disabled(first),
-						elm$html$Html$Events$onClick(
-						author$project$Types$GetHistory(currentPage - 1))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('<')
-					])),
-				A2(
-				buttonWithStyle,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$disabled(last),
-						elm$html$Html$Events$onClick(
-						author$project$Types$GetHistory(currentPage + 1))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('>')
-					])),
-				A2(
-				buttonWithStyle,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$disabled(last),
-						elm$html$Html$Events$onClick(
-						author$project$Types$GetHistory(totalPages - 1))
-					]),
-				_List_fromArray(
-					[
-						elm$html$Html$text('>>')
-					]))
-			]));
-};
-var elm$html$Html$th = _VirtualDom_node('th');
-var elm$html$Html$thead = _VirtualDom_node('thead');
-var elm$html$Html$tr = _VirtualDom_node('tr');
 var elm$html$Html$Attributes$scope = elm$html$Html$Attributes$stringProperty('scope');
 var author$project$View$viewTableHeader = A2(
 	elm$html$Html$thead,
@@ -6536,7 +6420,7 @@ var elm$time$Time$toAdjustedMinutesHelp = F3(
 			} else {
 				var era = eras.a;
 				var olderEras = eras.b;
-				if (_Utils_cmp(era.Q, posixMinutes) < 0) {
+				if (_Utils_cmp(era.P, posixMinutes) < 0) {
 					return posixMinutes + era.b;
 				} else {
 					var $temp$defaultOffset = defaultOffset,
@@ -6577,7 +6461,7 @@ var elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		X: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		W: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
 		ai: month,
 		aF: year + ((month <= 2) ? 1 : 0)
 	};
@@ -6585,7 +6469,7 @@ var elm$time$Time$toCivil = function (minutes) {
 var elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return elm$time$Time$toCivil(
-			A2(elm$time$Time$toAdjustedMinutes, zone, time)).X;
+			A2(elm$time$Time$toAdjustedMinutes, zone, time)).W;
 	});
 var elm$core$Basics$modBy = _Basics_modBy;
 var elm$time$Time$toHour = F2(
@@ -6716,17 +6600,17 @@ var elm$regex$Regex$fromStringWith = _Regex_fromStringWith;
 var elm$regex$Regex$fromString = function (string) {
 	return A2(
 		elm$regex$Regex$fromStringWith,
-		{U: false, aj: false},
+		{T: false, aj: false},
 		string);
 };
 var elm$regex$Regex$never = _Regex_never;
 var elm$regex$Regex$replace = _Regex_replaceAtMost(_Regex_infinity);
 var elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {W: col, ao: problem, aw: row};
+		return {V: col, ao: problem, aw: row};
 	});
 var elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3(elm$parser$Parser$DeadEnd, p.aw, p.W, p.ao);
+	return A3(elm$parser$Parser$DeadEnd, p.aw, p.V, p.ao);
 };
 var elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -6758,7 +6642,7 @@ var elm$parser$Parser$Advanced$run = F2(
 	function (_n0, src) {
 		var parse = _n0;
 		var _n1 = parse(
-			{W: 1, c: _List_Nil, d: 1, b: 0, aw: 1, a: src});
+			{V: 1, c: _List_Nil, d: 1, b: 0, aw: 1, a: src});
 		if (!_n1.$) {
 			var value = _n1.b;
 			return elm$core$Result$Ok(value);
@@ -6826,7 +6710,7 @@ var elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {W: col, aP: contextStack, ao: problem, aw: row};
+		return {V: col, aP: contextStack, ao: problem, aw: row};
 	});
 var elm$parser$Parser$Advanced$Empty = {$: 0};
 var elm$parser$Parser$Advanced$fromState = F2(
@@ -6834,7 +6718,7 @@ var elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			elm$parser$Parser$Advanced$AddRight,
 			elm$parser$Parser$Advanced$Empty,
-			A4(elm$parser$Parser$Advanced$DeadEnd, s.aw, s.W, x, s.c));
+			A4(elm$parser$Parser$Advanced$DeadEnd, s.aw, s.V, x, s.c));
 	});
 var elm$parser$Parser$Advanced$end = function (x) {
 	return function (s) {
@@ -6980,7 +6864,7 @@ var elm$parser$Parser$Advanced$token = function (_n0) {
 	var expecting = _n0.b;
 	var progress = !elm$core$String$isEmpty(str);
 	return function (s) {
-		var _n1 = A5(elm$parser$Parser$Advanced$isSubString, str, s.b, s.aw, s.W, s.a);
+		var _n1 = A5(elm$parser$Parser$Advanced$isSubString, str, s.b, s.aw, s.V, s.a);
 		var newOffset = _n1.a;
 		var newRow = _n1.b;
 		var newCol = _n1.c;
@@ -6991,7 +6875,7 @@ var elm$parser$Parser$Advanced$token = function (_n0) {
 			elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{W: newCol, c: s.c, d: s.d, b: newOffset, aw: newRow, a: s.a});
+			{V: newCol, c: s.c, d: s.d, b: newOffset, aw: newRow, a: s.a});
 	};
 };
 var elm$parser$Parser$Advanced$symbol = elm$parser$Parser$Advanced$token;
@@ -7015,7 +6899,7 @@ var elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.b, offset) < 0,
 					0,
-					{W: col, c: s0.c, d: s0.d, b: offset, aw: row, a: s0.a});
+					{V: col, c: s0.c, d: s0.d, b: offset, aw: row, a: s0.a});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -7047,7 +6931,7 @@ var elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5(elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aw, s.W, s);
+		return A5(elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.aw, s.V, s);
 	};
 };
 var elm$parser$Parser$chompWhile = elm$parser$Parser$Advanced$chompWhile;
@@ -7438,23 +7322,171 @@ var author$project$View$viewTrackWithPlayedAt = F2(
 						]))
 				]));
 	});
-var elm$html$Html$h2 = _VirtualDom_node('h2');
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$table = _VirtualDom_node('table');
-var author$project$View$viewHistory = F2(
+var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
+var author$project$View$viewHistoryTable = F2(
 	function (timeZone, history) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
-					elm$html$Html$Attributes$class('container')
+					elm$html$Html$Attributes$class('col')
 				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$table,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('table table-striped table-dark')
+						]),
+					_Utils_ap(
+						_List_fromArray(
+							[author$project$View$viewTableHeader]),
+						A2(
+							elm$core$List$map,
+							author$project$View$viewTrackWithPlayedAt(timeZone),
+							history.bl)))
+				]));
+	});
+var author$project$Types$GetHistory = function (a) {
+	return {$: 0, a: a};
+};
+var author$project$View$viewPageInformation = F2(
+	function (currentPage, totalPages) {
+		return elm$html$Html$text(
+			elm$core$String$fromInt(currentPage + 1) + ('/' + elm$core$String$fromInt(totalPages)));
+	});
+var elm$core$List$append = F2(
+	function (xs, ys) {
+		if (!ys.b) {
+			return xs;
+		} else {
+			return A3(elm$core$List$foldr, elm$core$List$cons, ys, xs);
+		}
+	});
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$bool(bool));
+	});
+var elm$html$Html$Attributes$disabled = elm$html$Html$Attributes$boolProperty('disabled');
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var elm$html$Html$Attributes$type_ = elm$html$Html$Attributes$stringProperty('type');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$View$viewPaginationButtons = function (_n0) {
+	var currentPage = _n0.aQ;
+	var totalPages = _n0.bj;
+	var first = _n0.aU;
+	var last = _n0.a1;
+	var buttonWithStyle = F2(
+		function (attributes, html) {
+			return A2(
+				elm$html$Html$button,
+				A2(
+					elm$core$List$append,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$type_('button'),
+							elm$html$Html$Attributes$class('btn btn-outline-dark mx-auto rounded'),
+							A2(elm$html$Html$Attributes$style, 'width', '80px')
+						]),
+					attributes),
+				html);
+		});
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('col btn-group')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				buttonWithStyle,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$disabled(first),
+						elm$html$Html$Events$onClick(
+						author$project$Types$GetHistory(0))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('<<')
+					])),
+				A2(
+				buttonWithStyle,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$disabled(first),
+						elm$html$Html$Events$onClick(
+						author$project$Types$GetHistory(currentPage - 1))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('<')
+					])),
+				A2(author$project$View$viewPageInformation, currentPage, totalPages),
+				A2(
+				buttonWithStyle,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$disabled(last),
+						elm$html$Html$Events$onClick(
+						author$project$Types$GetHistory(currentPage + 1))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('>')
+					])),
+				A2(
+				buttonWithStyle,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$disabled(last),
+						elm$html$Html$Events$onClick(
+						author$project$Types$GetHistory(totalPages - 1))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('>>')
+					]))
+			]));
+};
+var author$project$View$viewHistory = F2(
+	function (timeZone, history) {
+		return A2(
+			elm$html$Html$div,
+			_List_Nil,
 			_List_fromArray(
 				[
 					A2(
 					elm$html$Html$div,
 					_List_fromArray(
 						[
-							elm$html$Html$Attributes$class('row align-items-center justify-content-center')
+							elm$html$Html$Attributes$class('container')
 						]),
 					_List_fromArray(
 						[
@@ -7462,31 +7494,48 @@ var author$project$View$viewHistory = F2(
 							elm$html$Html$div,
 							_List_fromArray(
 								[
-									elm$html$Html$Attributes$class('col-md-12')
+									elm$html$Html$Attributes$class('row my-2')
 								]),
 							_List_fromArray(
 								[
-									A2(
-									elm$html$Html$h2,
-									_List_Nil,
-									_List_fromArray(
-										[
-											elm$html$Html$text('Listening History')
-										])),
-									author$project$View$viewPageInformation(history),
-									A2(
-									elm$html$Html$table,
-									_List_fromArray(
-										[
-											elm$html$Html$Attributes$class('table table-striped table-dark')
-										]),
-									_Utils_ap(
-										_List_fromArray(
-											[author$project$View$viewTableHeader]),
-										A2(
-											elm$core$List$map,
-											author$project$View$viewTrackWithPlayedAt(timeZone),
-											history.bl))),
+									author$project$View$viewPaginationButtons(history)
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('row')
+								]),
+							_List_fromArray(
+								[
+									A2(author$project$View$viewHistoryTable, timeZone, history)
+								]))
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('container')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							elm$html$Html$div,
+							_List_fromArray(
+								[
+									elm$html$Html$Attributes$class('row my-2')
+								]),
+							_List_fromArray(
+								[
 									author$project$View$viewPaginationButtons(history)
 								]))
 						]))
@@ -7494,7 +7543,7 @@ var author$project$View$viewHistory = F2(
 	});
 var elm$html$Html$h3 = _VirtualDom_node('h3');
 var author$project$View$viewHistoryOrError = function (model) {
-	var _n0 = model.M;
+	var _n0 = model.ac;
 	switch (_n0.$) {
 		case 0:
 			return elm$html$Html$text('');
@@ -7504,7 +7553,7 @@ var author$project$View$viewHistoryOrError = function (model) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						elm$html$Html$text('Loading...')
+						elm$html$Html$text('Loading')
 					]));
 		case 3:
 			var history = _n0.a;
@@ -7518,7 +7567,10 @@ var author$project$View$viewHistoryOrError = function (model) {
 var author$project$View$root = function (model) {
 	return A2(
 		elm$html$Html$div,
-		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('container')
+			]),
 		_List_fromArray(
 			[
 				author$project$View$viewHistoryOrError(model)
@@ -7559,7 +7611,7 @@ var elm$core$String$left = F2(
 var elm$core$String$contains = _String_contains;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ab: fragment, ad: host, al: path, an: port_, ar: protocol, as: query};
+		return {aa: fragment, ad: host, al: path, an: port_, ar: protocol, as: query};
 	});
 var elm$url$Url$chompBeforePath = F5(
 	function (protocol, path, params, frag, str) {

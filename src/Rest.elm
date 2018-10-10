@@ -8,24 +8,25 @@ import Types exposing (..)
 import Url.Builder as Url
 
 
-getHistoryCommand : Int -> Cmd Msg
-getHistoryCommand nextPage =
+getHistoryCommand : Int -> Bool -> Cmd Msg
+getHistoryCommand nextPage update =
     historyPageDecoder
-        |> getWithCors (toHistoryUrl nextPage)
+        |> getWithCors (toHistoryUrl nextPage update)
         |> RemoteData.sendRequest
         |> Cmd.map ReceivedHistory
 
 
-toHistoryUrl : Int -> String
-toHistoryUrl nextPage =
+toHistoryUrl : Int -> Bool -> String
+toHistoryUrl nextPage update =
     let
         baseUrl =
             "https://spotify-listening-history.herokuapp.com"
     in
     Url.crossOrigin baseUrl
         [ "listening-history", "get" ]
-        [ Url.int "size" 10
+        [ Url.int "size" 8
         , Url.int "page" nextPage
+        , Url.string "update" <| if update then "true" else "false"
         ]
 
 
